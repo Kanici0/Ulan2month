@@ -1,12 +1,10 @@
 import sqlite3
 
-# Подключение к базе данных
 connect = sqlite3.connect('users.db')
 cursor = connect.cursor()
 
-# Создание базы данных и таблиц с различными связями
 def create_db():
-    # Таблица пользователей
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             userid INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -16,7 +14,7 @@ def create_db():
         )
     ''')
 
-    # Таблица оценок, связь один ко многим
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS grades (
             gradeid INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,8 +24,6 @@ def create_db():
             FOREIGN KEY (userid) REFERENCES users(userid)
         )
     ''')
-
-    # Таблица профилей, связь один к одному
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS profiles (
             profileid INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,7 +34,6 @@ def create_db():
         )
     ''')
 
-    # Таблица курсов
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS courses (
             courseid INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,7 +41,7 @@ def create_db():
         )
     ''')
 
-    # Промежуточная таблица для связи многие ко многим
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS user_courses (
             userid INTEGER,
@@ -87,9 +82,9 @@ def add_user_to_course(user_id, course_id):
     connect.commit()
     print(f"Пользователь с ID {user_id} добавлен на курс с ID {course_id}")
 
-# Пример запросов с JOIN
 
-# INNER JOIN - пользователи с оценками
+
+
 def get_users_with_grades():
     cursor.execute('''
     SELECT users.fio, users.age, grades.subject, grades.grade
@@ -101,7 +96,7 @@ def get_users_with_grades():
     for row in rows:
         print(f"FIO: {row[0]}, AGE: {row[1]}, SUBJECT: {row[2]}, GRADE: {row[3]}")
 
-# LEFT JOIN - пользователи и их курсы (может быть пустое значение курса)
+
 def get_users_with_courses():
     cursor.execute('''
     SELECT users.fio, users.age, courses.course_name
@@ -114,7 +109,7 @@ def get_users_with_courses():
     for row in rows:
         print(f"FIO: {row[0]}, AGE: {row[1]}, COURSE: {row[2]}")
 
-# Многие ко многим - таблица user_courses
+
 def get_users_with_multiple_courses():
     cursor.execute('''
     SELECT users.fio, courses.course_name
@@ -127,7 +122,7 @@ def get_users_with_multiple_courses():
     for row in rows:
         print(f"FIO: {row[0]}, COURSE: {row[1]}")
 
-# Вложенные запросы - пользователи с максимальной оценкой
+
 def get_users_with_highest_grade():
     cursor.execute("""
         SELECT fio, subject, grade
@@ -139,7 +134,7 @@ def get_users_with_highest_grade():
     for user in users:
         print(f"FIO: {user[0]}, SUBJECT: {user[1]}, GRADE: {user[2]}")
 
-# Представления (Views)
+
 def create_users_view():
     cursor.execute("""
         CREATE VIEW IF NOT EXISTS user_view AS
@@ -156,20 +151,19 @@ def get_young_users():
     for user in young_users:
         print(f"FIO: {user[0]}, AGE: {user[1]}, HOBBY: {user[2]}")
 
-# Пример использования:
-# Добавление пользователей
+
 add_user("Илья Муромец", 25, "фехтование")
 add_user("John Doe", 30, "шахматы")
 
-# Добавление курсов
+
 add_course("Математика")
 add_course("Физика")
 
-# Добавление оценок
+
 add_grade(1, "Математика", 5)
 add_grade(2, "Физика", 4)
 
-# Добавление профилей
+
 add_profile(1, "Москва, ул. Ленина, д. 10", "123456789")
 add_profile(2, "Санкт-Петербург, ул. Пушкина, д. 20", "987654321")
 
